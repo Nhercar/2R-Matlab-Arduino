@@ -96,10 +96,33 @@ classdef ArduinoManager < handle
             
             try
                 writeline(obj.SerialObj, commandStr);
+                dibujar_robot2R(angle1, angle2, 11, 8.75);
             catch
                 warning("Connection lost.");
                 obj.IsConnected = false;
             end
+        end
+
+        function dibujar_robot2R(q1_grados, q2_grados, L1, L2)
+            % 1. Obtener posición del codo (Cojuntura 2)
+            q1_rad = deg2rad(q1_grados);
+            x_codo = L1 * cos(q1_rad);
+            y_codo = L1 * sin(q1_rad);
+            
+            % 2. Obtener posición del efector final (usando tu función c_d_r)
+            [x_final, y_final] = c_d_r(q1_grados, q2_grados, L1, L2);
+            
+            % 3. Definir los puntos de la estructura [Base, Codo, Extremo]
+            puntos_x = [0, x_codo, x_final];
+            puntos_y = [0, y_codo, y_final];
+            
+            % 4. Dibujar
+            plot(puntos_x, puntos_y, '-o', 'LineWidth', 3, 'MarkerSize', 6, 'MarkerFaceColor', 'k');
+            grid on;
+            axis equal;
+            % Ajustar límites según la longitud total para que no salte el gráfico
+            limite = L1 + L2 + 0.5;
+            xlim([-limite, limite]); ylim([-limite, limite]);
         end
         
         % --- Destructor ---
