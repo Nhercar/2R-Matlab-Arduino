@@ -102,6 +102,44 @@ classdef ArduinoManager < handle
                 obj.IsConnected = false;
             end
         end
+
+        function ejecutarTrayectoria(obj, qMatrix, tiempoTotal)
+        % EJECUTARTRAYECTORIA Recibe una matriz [2 x N] y la envía punto a punto
+        % qMatrix: Matriz de radianes [2 filas x N columnas]
+        % tiempoTotal: Tiempo en segundos que debe durar todo el movimiento
+
+        [~, numPasos] = size(qMatrix)
+
+        % Calculamos cuánto debe durar cada "mini-movimiento"
+        dt = tiempoTotal / numPasos;
+        obj.setServos(qMatrix(1,1), qMatrix(2,1));
+        pause(1)
+        % Bucle de ejecución temporal
+        for i = 2:numPasos
+            tic; % Iniciar cronómetro
+
+            % 1. Extraer configuración actual (vector columna)
+            qTarget = qMatrix(:, i);
+
+
+
+            % 3. ENVIAR AL ROBOT
+            % Usamos moverRobot con el tiempo pequeño 'dt'
+            % Esto le dice al robot: "Ve a este punto y tarda dt segundos"
+            obj.setServos(qTarget(1), qTarget(2));
+
+            % 4. Esperar para mantener el ritmo (Sincronización)
+            tLoop = toc;
+            pauseTime = dt - tLoop;
+            if pauseTime > 0
+                pause(pauseTime);
+            else
+                % Si el bucle es lento, no pausamos (warning opcional)
+            end
+        end
+
+        fprintf('Trayectoria finalizada.\n');
+        end
         
         % --- Destructor ---
         function delete(obj)
