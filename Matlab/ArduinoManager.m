@@ -36,17 +36,15 @@ classdef ArduinoManager < handle
                     fprintf("Probing %s... ", currentPort);
                     
                     % 1. Open Connection
-                    s = serialport(currentPort, obj.BaudRate);
+                    s = serialport(currentPort, obj.BaudRate,"Timeout", 1);
                     configureTerminator(s, "LF");
                     flush(s);
                     
                     % 2. Wait for Arduino Reset (CRITICAL STEP)
                     % When Serial opens, Arduino reboots. We must wait ~2s.
                     pause(2); 
-                    
                     % 3. Send Handshake "?"
                     writeline(s, obj.HandshakeQuery);
-                    
                     % 4. Listen for "A" (Timeout 1 second)
                     startTick = tic;
                     found = false;
@@ -58,6 +56,7 @@ classdef ArduinoManager < handle
                                 break;
                             end
                         end
+                        pause(0.2);
                     end
                     
                     if found
@@ -108,7 +107,7 @@ classdef ArduinoManager < handle
         % qMatrix: Matriz de radianes [2 filas x N columnas]
         % tiempoTotal: Tiempo en segundos que debe durar todo el movimiento
 
-        [~, numPasos] = size(qMatrix)
+        [~, numPasos] = size(qMatrix);
 
         % Calculamos cuánto debe durar cada "mini-movimiento"
         dt = tiempoTotal / numPasos;
