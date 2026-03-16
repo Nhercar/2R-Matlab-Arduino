@@ -8,8 +8,8 @@ Servo servo2; // Pin 10
 const int pin1 = 2; //ConexiÃ³n de q1
 const int pin2 = 3; //ConexiÃ³n de q2
 
-const int offsetq1 = -3; // Este offset hay que configurarlo antes de programar el robot.
-const int offsetq2 = -8; // Al enviar servo1=90, servo2=90. Los brazos deben estar alineados al eje X.
+const int offsetq1 = 0; // Este offset hay que configurarlo antes de programar el robot.
+const int offsetq2 = 0; // Al enviar servo1=90, servo2=90. Los brazos deben estar alineados al eje X.
 
 // Handshake settings: Matlab busca por los puertos COM disponibles. Manda un mensaje y espera una respuesta con un A.
 const char HANDSHAKE_QUERY = '?';
